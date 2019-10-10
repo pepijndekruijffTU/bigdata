@@ -36,12 +36,15 @@ object RDDAssignment {
 
      val test = commits.flatMap(_.files).flatMap(_.filename)
        .map(filename => if(filename.contains("/")) filename.split("\\/").last else filename)
-       .map(filename => if(filename.contains(".") && filename.matches("^(?![.])(?!.*[-_.]$).+")) filename.split("\\.").last else "unknown")
+       .map(filename => if(filename.contains(".")) filename.split("\\.").last else "unknown")
        .map(ext => (ext.asInstanceOf[String], 1L)).reduceByKey((x,y) => x+y)
 //    println("test")
 //    test.collect().take(100).foreach(println)
     test
   }
+  // && filename.matches("^(?![.])(?!.*[-_.]$).+") can be inserted in row 39 if ".php" is not allowed as a .php file
+
+
 
   /**
     * Competitive users on Github might be interested in their ranking in number of commits. We require as return a
@@ -53,7 +56,13 @@ object RDDAssignment {
     * @param commits RDD containing commit data.
     * @return RDD containing commit author names and total count of commits done by the author, in ordered fashion.
     */
-  def assignment_3(commits: RDD[Commit]): RDD[(Long, String, Long)] = ???
+  def assignment_3(commits: RDD[Commit]): RDD[(Long, String, Long)] = {
+    val res = commits.map(_.commit).map(_.author).map(_.name)
+        .map(name => (name, 1L)).reduceByKey((x,y) => x+y)
+        .sortBy(t => (-t._2, t._1))
+        .zipWithIndex.map {case ((name, number), rank)=> (rank, name, number)}
+    res
+  }
 
   /**
     * Some users are interested in seeing an overall contribution of all their work. For this exercise we an RDD that
