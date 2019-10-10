@@ -41,10 +41,15 @@ object RDDAssignment {
    * */
   def assignment_2(commits: RDD[Commit]): RDD[(String, Long)] = {
 
-     val test = commits.flatMap(_.files).flatMap(_.filename).map(s => s.replaceAll('"'.toString,"")).map(s => s.replaceAll("\\?","")) .map(s => s.replaceAll("\\:","")) .map(filename => Paths.get(filename).toString.split("\\.").last).groupBy(identity)//.mapValues(_.size)
+     val test = commits.flatMap(_.files).flatMap(_.filename)
+       .map(s => s.replaceAll('"'.toString,""))
+       .map(s => s.replaceAll("\\?","")).map(s => s.replaceAll("\\*".toString,""))
+       .map(s => s.replaceAll("\\|".toString,"")).map(s => s.replaceAll("\\:",""))
+       .map(filename => filename.split("\\.").last)
+      //.map(filename => filename.split("\\.").last).map(ext => (ext,1)).reduceByKey((x,y)=> (x+y))  // .groupBy(identity)//.mapValues(_.size)
 
 
-     test.take(30).foreach(println)
+     test.collect().foreach(println)
 
      return null;
   }
