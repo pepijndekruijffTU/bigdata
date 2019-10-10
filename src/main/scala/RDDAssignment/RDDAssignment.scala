@@ -34,12 +34,12 @@ object RDDAssignment {
     */
   def assignment_2(commits: RDD[Commit]): RDD[(String, Long)] = {
 
-     val test = commits.flatMap(_.files).flatMap(_.filename)
+    val test = commits.flatMap(_.files).flatMap(_.filename)
        .map(filename => if(filename.contains("/")) filename.split("\\/").last else filename)
        .map(filename => if(filename.contains(".")) filename.split("\\.").last else "unknown")
        .map(ext => (ext.asInstanceOf[String], 1L)).reduceByKey((x,y) => x+y)
-//    println("test")
-//    test.collect().take(100).foreach(println)
+    println("test")
+    test.collect().take(100).foreach(println)
     test
   }
   // && filename.matches("^(?![.])(?!.*[-_.]$).+") can be inserted in row 39 if ".php" is not allowed as a .php file
@@ -86,7 +86,23 @@ object RDDAssignment {
     * @return RDD of Strings representing the username that have either only committed to repositories or only own
     *         repositories.
     */
-  def assignment_5(commits: RDD[Commit]): RDD[String] = ???
+  def assignment_5(commits: RDD[Commit]): RDD[String] = {
+
+    // find names of commit authors
+    // find logins of repo owners
+    // find names corresponding to logins
+    // outer join on them
+
+    val res = commits.map(_.commit).map(_.author).map(_.name)
+
+    val res2 = commits.map(_.url).map(url => url.split("https://api.github.com/repos/)"))
+//      .split("\\/").first
+
+    res2.collect().take(5).foreach(println)
+
+
+    "s".asInstanceOf[RDD[String]]
+  }
 
   /**
     * Sometimes developers make mistakes, sometimes they make many. One way of observing mistakes in commits is by
