@@ -32,26 +32,16 @@ object RDDAssignment {
     * @param commits RDD containing commit data.
     * @return RDD containing tuples indicating the programming language (extension) and number of occurrences.
     */
-
-   /*       val output=input.flatMap(_.files).flatMap(_.filename)  //.map(filename => Paths.get(filename).getFileName)
-        val outputWithoutBuggyQuotes=output.map(s => s.replaceAll('"'.toString,"")).map(s => s.replaceAll("\\?","")).map(s => s.replaceAll("\\:","")).map(filename => Paths.get(filename).toString.split("\\.").last).groupBy(identity).mapValues(_.size)
-        val sorted = List(outputWithoutBuggyQuotes.toSeq.sortWith(_._2 > _._2):_*).take(5)
-   *
-   *
-   * */
   def assignment_2(commits: RDD[Commit]): RDD[(String, Long)] = {
 
      val test = commits.flatMap(_.files).flatMap(_.filename)
-       .map(s => s.replaceAll('"'.toString,""))
-       .map(s => s.replaceAll("\\?","")).map(s => s.replaceAll("\\*".toString,""))
-       .map(s => s.replaceAll("\\|".toString,"")).map(s => s.replaceAll("\\:",""))
-       .map(filename => filename.split("\\.").last)
-      //.map(filename => filename.split("\\.").last).map(ext => (ext,1)).reduceByKey((x,y)=> (x+y))  // .groupBy(identity)//.mapValues(_.size)
+       .map(filename => if(filename.contains("/")) filename.split("\\/").last else filename)
+         .map(filename => if(filename.contains(".")) filename.split("\\.").last else "Unknown")
+         .map(ext => (ext.toString,1L)).reduceByKey((x,y) => x+y)
+    println("test")
+    test.collect().take(30).foreach(println)
+     test
 
-
-     test.collect().foreach(println)
-
-     return null;
   }
 
   /**
