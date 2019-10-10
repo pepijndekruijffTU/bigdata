@@ -31,7 +31,7 @@ class StudentTest extends FunSuite with BeforeAndAfterAll {
   commitRDD.cache()
 
   test("Example test for students") {
-    RDDAssignment.assignment_2(commitRDD)
+    RDDAssignment.assignment_3(commitRDD)
   }
 
 
