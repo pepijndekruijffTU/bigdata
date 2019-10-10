@@ -85,7 +85,14 @@ object RDDAssignment {
     * @param commits RDD containing commit data.
     * @return RDD containing committer names and an aggregation of the committers Stats.
     */
-  def assignment_4(commits: RDD[Commit], users: List[String]): RDD[(String, Stats)] = ???
+  def assignment_4(commits: RDD[Commit], users: List[String]): RDD[(String, Stats)] = {
+    val ret = commits.filter(commit => users.contains(commit.commit.committer.name)).map(s => (s.commit.committer.name, s.stats))
+      .groupBy(_._1).mapValues(_.flatMap(_._2))
+
+    ret.collect().foreach(println)
+
+    return null
+  }
 
 
   /**
