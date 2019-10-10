@@ -36,10 +36,10 @@ object RDDAssignment {
 
      val test = commits.flatMap(_.files).flatMap(_.filename)
        .map(filename => if(filename.contains("/")) filename.split("\\/").last else filename)
-       .map(filename => if(filename.contains(".")) filename.split("\\.").last else "Unknown")
+       .map(filename => if(filename.contains(".") && filename.matches("^(?![.])(?!.*[-_.]$).+")) filename.split("\\.").last else "unknown")
        .map(ext => (ext.asInstanceOf[String], 1L)).reduceByKey((x,y) => x+y)
 //    println("test")
-//    test.collect().take(30).foreach(println)
+//    test.collect().take(100).foreach(println)
     test
   }
 
