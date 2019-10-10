@@ -45,10 +45,12 @@ object RDDAssignment {
        .map(s => s.replaceAll('"'.toString,""))
        .map(s => s.replaceAll("\\?","")).map(s => s.replaceAll("\\*".toString,""))
        .map(s => s.replaceAll("\\|".toString,"")).map(s => s.replaceAll("\\:",""))
-       .map(filename => filename.split("\\.").last)
-      //.map(filename => filename.split("\\.").last).map(ext => (ext,1)).reduceByKey((x,y)=> (x+y))  // .groupBy(identity)//.mapValues(_.size)
-
-
+       .map(s => s.split('/').last)
+       .map(s => if (s.charAt(0) == '.') { s.substring(1, s.size)} else {s})
+        // .map(s => println(s.charAt(0)))
+       .map(s => if (s.contains(".")) {s} else {"unknown" + s}) //change if string starts with .
+//
+        .map(filename => filename.split("\\.").last).map(ext => (ext,1)).reduceByKey((x,y)=> (x+y))
      test.collect().foreach(println)
 
      return null;
