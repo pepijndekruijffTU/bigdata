@@ -107,10 +107,10 @@ object RDDAssignment {
 
     val res = commits.map(_.commit).map(_.author).map(_.name)
 
-    val res2 = commits.map(_.url).map(url => url.split("https://api.github.com/repos/)"))
+//    val res2 = commits.map(_.url).map(url => url.split("https\\:\\/\\/api\\.github\\.com\\/repos\\/)")).toString()
 //      .split("\\/").first
 
-    res2.collect().take(5).foreach(println)
+//    res2.collect().take(5).foreach(println)
 
 
     "s".asInstanceOf[RDD[String]]
