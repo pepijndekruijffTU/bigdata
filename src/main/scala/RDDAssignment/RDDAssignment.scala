@@ -36,28 +36,24 @@ object RDDAssignment {
     * @return RDD containing tuples indicating the programming language (extension) and number of occurrences.
     */
   def assignment_2(commits: RDD[Commit]): RDD[(String, Long)] = {
+    val res = commits.flatMap(commit => {
+      commit.files.map(file => {
+        if(file.filename.get.lastIndexOf(".") == -1){
+          "unknown"
+        } else if(file.filename.isEmpty || file.filename == ""){
+          "unknown"
+        } else {
+          file.filename.get.split("\\.").last
+        }
+      })
+    }).map(x => (x.asInstanceOf[String], 1L)).reduceByKey((x, y) => x+y)
 
-     val test = commits.flatMap(_.files).flatMap(_.filename)
-       .map(s => s.replaceAll('"'.toString,""))
-       .map(s => s.replaceAll("\\?","")).map(s => s.replaceAll("\\*".toString,""))
-       .map(s => s.replaceAll("\\|".toString,"")).map(s => s.replaceAll("\\:",""))
-       .map(s => s.split('/').last)
-       .map(s => if (s.charAt(0) == '.') { s.substring(1, s.size)} else {s})
-        // .map(s => println(s.charAt(0)))
-       .map(s => if (s.contains(".")) {s} else {"unknown" + s}) //change if string starts with .
-//
-        .map(filename => filename.split("\\.").last).map(ext => (ext,1)).reduceByKey((x,y)=> (x+y))
-     test.collect().foreach(println)
+//    println("WWWWWWWWWWWWWWWW")
+//    res.collect().take(10).foreach(println)
+// && filename.matches("^(?![.])(?!.*[-_.]$).+") can be inserted in row 39 if ".php" is not allowed as a .php file
 
-     return null;
+    res
   }
-  //       .map(filename => if(filename.contains("/")) filename.split("\\/").last else filename)
-  //       .map(filename => if(filename.contains(".")) filename.split("\\.").last else "unknown")
-  //       .map(ext => (ext.asInstanceOf[String], 1L)).reduceByKey((x,y) => x+y)
-  ////    println("test")
-  ////    test.collect().take(100).foreach(println)
-  //    test
-  // && filename.matches("^(?![.])(?!.*[-_.]$).+") can be inserted in row 39 if ".php" is not allowed as a .php file
 
 
 
