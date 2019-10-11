@@ -90,13 +90,11 @@ object RDDAssignment {
     */
   def assignment_4(commits: RDD[Commit], users: List[String]): RDD[(String, Stats)] = {
     val ret = commits.filter(commit => users.contains(commit.commit.committer.name)).map(s => (s.commit.committer.name, s.stats))
-    .groupBy(_._1).mapValues(_.flatMap(_._2))//.foldLeft(0.0)((_ + _.total)))
-
-
+    .groupBy(_._1).mapValues(_.flatMap(_._2).reduce((a, b) => Stats(a.total + b.total, a.additions+b.additions, a.deletions+b.deletions)))    //.foldLeft((commits.filter()))((a:Stats, b:Stats)=>(a._1+b.total,a._2+b.additions,a._3+b.deletions)) )      //foldLeft(0.0)((_ + _.total)))
 
     ret.collect().foreach(println)
 
-    return null
+    return ret
   }
 
 
@@ -151,10 +149,10 @@ object RDDAssignment {
     return null
   }
 
-  def countSubstring(str1:String, str2:String):Int={
+  def countSubstring(string1:String, string2:String):Int={
     @tailrec def count(pos:Int, c:Int):Int={
-      val idx=str1 indexOf(str2, pos)
-      if(idx == -1) c else count(idx+str2.size, c+1)
+      val idx=string1 indexOf(string2, pos)
+      if(idx == -1) c else count(idx+string2.size, c+1)
     }
     count(0,0)
   }
