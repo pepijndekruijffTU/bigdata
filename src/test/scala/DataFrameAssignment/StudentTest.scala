@@ -31,7 +31,7 @@ class StudentTest extends FunSuite with BeforeAndAfterAll {
   commitRDD.cache()
 
   test("Example test for students") {
-    DFAssignment.assignment_1(commitDF, List("someauthor"))
+    DFAssignment.assignment_2(commitDF)
   }
 
   override def afterAll(): Unit = {
