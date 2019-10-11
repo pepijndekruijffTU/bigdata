@@ -1,8 +1,9 @@
 package DataFrameAssignment
 
 import java.sql.Timestamp
-
 import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.functions.col
+
 
 /**
   * Note read the comments carefully, as they describe the expected result and may contain hints in how
@@ -29,7 +30,20 @@ object DFAssignment {
     *                SHA's.
     * @return DataFrame of commits from the requested authors, including the commit SHA and the according timestamp.
     */
-  def assignment_1(commits: DataFrame, authors: Seq[String]): DataFrame = ???
+  def assignment_1(commits: DataFrame, authors: Seq[String]): DataFrame = {
+    val spark = org.apache.spark.sql.SparkSession.builder
+      .master("local")
+      .appName("App name")
+      .getOrCreate;
+
+    import spark.implicits._
+
+    val ret = commits.filter(commits("commit.author.name").isin(authors:_*)).select("commit.author.name", "sha", "commit.author.date").sort("commit.author.date")
+        //.where($"commit.author.name"==="Emeric")
+    ret.show()
+
+    return ret
+  }
 
   /**
     * In order to generate weekly dashboards for all projects, we need the data to be partitioned by weeks. As projects
@@ -45,7 +59,12 @@ object DFAssignment {
     * @return Dataframe containing 4 columns, Repository name, week number, year and the number fo commits for that
     *         week.
     */
-  def assignment_2(commits: DataFrame): DataFrame = ???
+  def assignment_2(commits: DataFrame): DataFrame = {
+    val ret = commits.select("url", "sha", "commit.author.date").sort("commit.author.date")
+
+    ret.show()
+    return null
+  }
 
   /**
     * A developer is interested in the age of commits in seconds, although this is something that can always be
