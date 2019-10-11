@@ -1,7 +1,6 @@
 package RDDAssignment
 
 import java.util.UUID
-
 import java.math.BigInteger
 import java.security.MessageDigest
 
@@ -9,6 +8,10 @@ import org.apache.spark.graphx.Graph
 import org.apache.spark.rdd.RDD
 import utils.{Commit, File, Stats}
 import java.nio.file.Paths
+
+import breeze.linalg.max
+
+import scala.annotation.tailrec
 
 object RDDAssignment {
 
@@ -87,7 +90,9 @@ object RDDAssignment {
     */
   def assignment_4(commits: RDD[Commit], users: List[String]): RDD[(String, Stats)] = {
     val ret = commits.filter(commit => users.contains(commit.commit.committer.name)).map(s => (s.commit.committer.name, s.stats))
-      .groupBy(_._1).mapValues(_.flatMap(_._2))
+    .groupBy(_._1).mapValues(_.flatMap(_._2))//.foldLeft(0.0)((_ + _.total)))
+
+
 
     ret.collect().foreach(println)
 
@@ -137,7 +142,22 @@ object RDDAssignment {
     * @return RDD of Tuple type containing a commit author username, and a tuple containing the length of the longest
     *         commit streak as well its frequency.
     */
-  def assignment_6(commits: RDD[Commit]): RDD[(String, (Int, Int))] = ???
+  def assignment_6(commits: RDD[Commit]): RDD[(String, (Int, Int))] = {
+    val ret = commits.map(commit => (commit.author.map(_.login).getOrElse("nousername"), countSubstring(commit.commit.message, "Revert \"")))
+
+    val ret2 = ret.reduceByKey((accum, n) => max(accum, n))  //.filter(_.commit.message.startsWith("Revert")).count()
+
+    ret2.collect().foreach(println)
+    return null
+  }
+
+  def countSubstring(str1:String, str2:String):Int={
+    @tailrec def count(pos:Int, c:Int):Int={
+      val idx=str1 indexOf(str2, pos)
+      if(idx == -1) c else count(idx+str2.size, c+1)
+    }
+    count(0,0)
+  }
 
 
   /**

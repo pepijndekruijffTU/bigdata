@@ -3,7 +3,7 @@ package RDDAssignment
 import org.apache.spark.sql.{DataFrame, SQLContext, SparkSession}
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import utils.{Commit, Loader}
-
+import org.apache.spark.sql.functions._
 import scala.reflect.io.Path
 
 /**
@@ -31,7 +31,7 @@ class StudentTest extends FunSuite with BeforeAndAfterAll {
   commitRDD.cache()
 
   test("Example test for students") {
-    RDDAssignment.assignment_4(commitRDD,  List("Emeric", "hrexed"))
+    RDDAssignment.assignment_6(commitRDD) //,  List("Emeric", "hrexed")
   }
 
 
